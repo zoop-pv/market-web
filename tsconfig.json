@@ -27,7 +27,6 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es5",
-    "types": ["@types/jest", "node", "@types/testing-library__jest-dom"]
   },
   "include": ["next-env.d.ts","environments.d", "**/*.ts", "**/*.tsx", "types/*.d.ts"],
   "exclude": ["node_modules"],
