@@ -1,0 +1,35 @@
+.cardsContainer {
+  padding-bottom: 24px;
+}
+
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  @media screen and (max-width: 576px) {
+    margin-bottom: 45px;
+  }
+}
+
+.viewMapBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1e1e1e;
+  border-radius: 50px;
+  font-weight: 700;
+  margin: 39px auto 64px;
+  width: 120px;
+  height: 42px;
+  cursor: pointer;
+  @media screen and (max-width: 576px) {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+  }
+  span {
+    color: #fff;
+    margin-right: 9px;
+  }
+}

@@ -1,0 +1,20 @@
+body {
+  margin: 0;
+}
+.container {
+  width: 1312px;
+  max-width: calc(100vw - 120px);
+  margin: auto;
+}
+
+@media screen and (max-width: 992px) {
+  .container {
+    max-width: calc(100vw - 60px);
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .container {
+    max-width: calc(100vw - 32px);
+  }
+}

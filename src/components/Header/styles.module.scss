@@ -1,0 +1,96 @@
+.header {
+  border-bottom: 1px solid #e5e9ef;
+  @media screen and (max-width: 576px) {
+    padding: 16px 43px;
+  }
+}
+
+.innerContainer {
+  display: flex;
+  align-items: center;
+  position: relative;
+  @media screen and (max-width: 992px) {
+    flex-direction: column;
+  }
+  @media screen and (max-width: 576px) {
+    width: auto;
+  }
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  img {
+    @media screen and (max-width: 576px) {
+      width: 32px !important;
+      height: 32px !important;
+    }
+  }
+  h1 {
+    margin-left: 24px;
+    @media screen and (max-width: 576px) {
+      margin-left: 16px;
+      font-weight: 500;
+      font-size: 24px;
+      margin-bottom: 0;
+      margin-top: 0;
+    }
+  }
+}
+
+.inputContainer {
+  width: 498px;
+  height: 46px;
+  position: absolute;
+  right: 50%;
+  transform: translateX(50%);
+  margin-right: -35px;
+  @media screen and (max-width: 1400px) {
+    right: 0;
+    transform: translateX(0);
+    margin-right: 0;
+  }
+  @media screen and (max-width: 1200px) {
+    width: 300px;
+  }
+  @media screen and (max-width: 992px) {
+    width: 498px;
+    max-width: 80%;
+  }
+  .searchIcon {
+    position: absolute;
+    left: 23px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  input {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 0 52px;
+    border-radius: 30px;
+    border: none;
+    box-shadow: 0 1px 9px 0 rgba($color: #000, $alpha: 0.15);
+  }
+
+  .loadingSpinner {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  @media screen and (max-width: 992px) {
+    position: relative;
+    width: 100%;
+    height: 40px;
+    position: relative;
+    right: auto;
+    transform: none;
+    margin-right: 0;
+    padding: 16px 0;
+  }
+  @media screen and (max-width: 576px) {
+    padding: 0;
+    margin-top: 12px;
+  }
+}
