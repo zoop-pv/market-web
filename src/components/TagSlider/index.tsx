@@ -1,54 +1,34 @@
 /* eslint-disable @next/next/no-img-element */
 import styles from "./styles.module.scss";
-
+import { useRouter } from 'next/router';
+import { MouseEventHandler } from "react";
 type TagProps = {
-  src: string,
-  title: string
+  icon?: string,
+  title?: string,
+  name?:string,
+  onClick:MouseEventHandler
 };
 
-const tags = [
-  {
-    src: "/assets/icons/tags/vehicles.svg",
-    title: "vehicles"
-  },{
-    src: "/assets/icons/tags/coffee.svg",
-    title: "coffee shop"
-  },{
-    src: "/assets/icons/tags/restaurant.svg",
-    title: "restaurants"
-  },{
-    src: "/assets/icons/tags/rent.svg",
-    title: "property rentals"
-  },{
-    src: "/assets/icons/tags/sale.svg",
-    title: "property for sale"
-  },{
-    src: "/assets/icons/tags/pet.svg",
-    title: "pets supplies"
-  },{
-    src: "/assets/icons/tags/electronics.svg",
-    title: "electronics"
-  },{
-    src: "/assets/icons/tags/fiat.svg",
-    title: "fiat exchange"
-  },{
-    src: "/assets/icons/tags/toys.svg",
-    title: "toys & games"
-  },{
-    src: "/assets/icons/tags/sports.svg",
-    title: "sports goods"
-  }
-]
-
-const Tag = ({src, title}: TagProps) => <div className={styles.tag}>
-    <img src={src} alt="logo"/>
-  <p data-text={title}>{title}</p>
+const Tag = ({ name,icon,onClick}: TagProps) => <div className={styles.tag} onClick={onClick}>
+    <img src={icon} alt="logo"/>
+  <p data-text={name}>{name}</p>
 </div>;
 
-export default function TagSlider() {
+export default function TagSlider(options:any) {
+  const router = useRouter();
+  const handleTagChange = (id:string)=>{
+    let searchTags = router.query.tags ? Array.isArray(router.query.tags) ? router.query.tags : [router.query.tags] : [];
+    searchTags.push(id);
+    if(typeof options.searchTagsState =="function"){
+      options.searchTagsState(searchTags);
+    }
+    router.query.tags = searchTags;
+    router.push(router);
+  };
+  let tagsData = options.tagsData ? options.tagsData : []
   return (
     <div className={styles.tagsSlider}>
-      {tags.map((tag) => <Tag key={tag.title} {...{...tag}}/>)}
+      {tagsData.map((tag:any) => <Tag key={tag._id} {...{...tag}} onClick={()=>{handleTagChange(tag._id);}}/>)}
     </div>
   )
 }

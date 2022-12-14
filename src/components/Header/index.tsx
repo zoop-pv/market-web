@@ -6,6 +6,8 @@ import CircularProgress, {
 
 import styles from "./styles.module.scss";
 import { Box } from "@mui/material";
+import { useRouter } from 'next/router';
+import { debounce } from "lodash"
 
 const FacebookCircularProgress = (props: JSX.IntrinsicAttributes) => {
   return (
@@ -41,7 +43,19 @@ const FacebookCircularProgress = (props: JSX.IntrinsicAttributes) => {
   );
 }
 
-export default function Header() {
+export default function Header(options:any) {
+  const router = useRouter();
+  var searchTextDebounced = debounce((e: { target: { value: string | string[] | undefined; }; })=>{
+    router.query.text = e.target.value;
+    if(typeof options.setsearchText =="function"){
+      options.setsearchText(e.target.value);
+    }
+    router.push(router)
+  }, 200); 
+  const handlePaginationChange = (e:any)=>{
+    searchTextDebounced(e);
+
+  };
   return (
     <header className={styles.header}>
       <div className={`container ${styles.innerContainer}`}>
@@ -51,7 +65,7 @@ export default function Header() {
         </div>
         <div className={styles.inputContainer}>
           <Image className={styles.searchIcon} src="/assets/icons/Vector.svg" width={19} height={19} alt="search"/>
-          <input placeholder="Restaurants" />
+          <input placeholder="Restaurants" onChange={handlePaginationChange}/>
           <div className={styles.loadingSpinner}>
             <FacebookCircularProgress />
           </div>

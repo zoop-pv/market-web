@@ -3,21 +3,21 @@ import styles from "./styles.module.scss";
 
  
 type CardProps = {
-  url: string,
+  mainImageUrl: string,
   price: number,
-  address: string,
+  name: string,
   description: string
 }
 
-export default function Card({url, price, address, description}: CardProps) {
+export default function Card({mainImageUrl, price, name, description}: CardProps) {
   return (
     <div className={styles.card}>
       <div className={styles.imageContainer}>
-        <Image src={url} fill alt="post"/>
+        <Image src={mainImageUrl} fill alt="post"/>
       </div>
       <div className={styles.textSection}>
         <p className={styles.price}>{price}</p>
-        <p className={styles.address}>{address}</p>
+        <p className={styles.address}>{name}</p>
         <p className={styles.description}>{description}</p>
       </div>
     </div>
