@@ -1,0 +1,33 @@
+.marker {
+  display: flex;
+  width: 100px;
+  .iconContainer {
+    width: 63px;
+    height: 52px;
+    position: relative;
+  }
+  .distance {
+    position: absolute;
+    top: 10px;
+    right: 5px;
+    color: #fff;
+    font-weight: 500;
+    font-size: 16px;
+    margin: 0;
+  }
+  .textContainer {
+    position: absolute;
+    top: 2px;
+    right: 0;
+    transform: translateX(100%);
+    background-color: #fff;
+    padding: 6px;
+    p {
+      font-weight: bold;
+      text-transform: capitalize;
+      font-size: 18px;
+      margin: 0;
+      width: max-content;
+    }
+  }
+}

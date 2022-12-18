@@ -7,9 +7,30 @@ body {
   margin: auto;
 }
 
+.map-container {
+  position: absolute;
+  inset: 0;
+}
+
+.bottomSliderList .slick-track {
+  display: flex;
+  flex-direction: row;
+}
+
+.bottomSliderList .slick-track .slick-slide {
+  padding: 0 8px;
+}
+
 @media screen and (max-width: 992px) {
   .container {
     max-width: calc(100vw - 60px);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .bottomSliderList .slick-track .slick-slide {
+    display: flex;
+    justify-content: center;
   }
 }
 
@@ -19,8 +40,8 @@ body {
   }
 }
 
-.map-container {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
+@media screen and (max-width: 400px) {
+  .bottomSliderList .slick-track .slick-slide {
+    padding: 0 2px;
+  }
 }

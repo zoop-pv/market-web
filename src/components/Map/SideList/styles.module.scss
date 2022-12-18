@@ -1,0 +1,66 @@
+.sideList {
+  position: absolute;
+  z-index: 1;
+  right: 10px;
+  top: 230px;
+  bottom: 0;
+  width: 400px;
+  background-color: #fff;
+  overflow-y: hidden;
+  padding-bottom: 60px;
+  border-radius: 8px;
+  &.noBorderPadding {
+    padding-bottom: 0;
+  }
+  .header {
+    padding: 0 16px;
+    margin: 16px 0 0;
+    h4 {
+      font-weight: 500;
+      font-size: 24px;
+      color: #000;
+      margin: 0;
+    }
+  }
+  .sideCardsContainer {
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding-top: 12px;
+  }
+  .sideCardsContainer::-webkit-scrollbar {
+    display: none;
+  }
+  @media screen and (max-width: 1024px) {
+    display: none;
+  }
+  &.mobileSingleCard {
+    @media screen and (max-width: 1024px) {
+      display: block !important;
+    }
+    @media screen and (max-width: 500px) {
+      display: block !important;
+      position: fixed;
+      inset: 0;
+      width: auto;
+      border-radius: 0;
+      z-index: 2;
+    }
+  }
+}
+
+.bottomSliderList {
+  display: none;
+  @media screen and (max-width: 1024px) {
+    display: block;
+    position: fixed;
+    z-index: 1;
+    right: 0;
+    left: 0;
+    height: 200px;
+    bottom: 0;
+    background-color: transparent;
+    border-radius: 8px;
+  }
+}
