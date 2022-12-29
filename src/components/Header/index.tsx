@@ -1,22 +1,22 @@
-import Image from "next/image"
+import Image from "next/image";
 
 import CircularProgress, {
   circularProgressClasses,
-} from '@mui/material/CircularProgress';
-
+} from "@mui/material/CircularProgress";
 import styles from "./styles.module.scss";
 import { Box } from "@mui/material";
-import { useRouter } from 'next/router';
-import { debounce } from "lodash"
+import { useRouter } from "next/router";
+import { debounce } from "lodash";
+import { useState } from "react";
 
-const FacebookCircularProgress = (props: JSX.IntrinsicAttributes) => {
+const CircularProgressComponent = (props: JSX.IntrinsicAttributes) => {
   return (
-    <Box sx={{ position: 'relative' }}>
+    <Box sx={{ position: "relative" }}>
       <CircularProgress
         variant="determinate"
         sx={{
           color: (theme) =>
-            theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
+            theme.palette.grey[theme.palette.mode === "light" ? 200 : 800],
         }}
         size={20}
         thickness={3}
@@ -27,12 +27,13 @@ const FacebookCircularProgress = (props: JSX.IntrinsicAttributes) => {
         variant="indeterminate"
         disableShrink
         sx={{
-          color: (theme) => (theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8'),
-          animationDuration: '550ms',
-          position: 'absolute',
+          color: (theme) =>
+            theme.palette.mode === "light" ? "#1a90ff" : "#308fe8",
+          animationDuration: "550ms",
+          position: "absolute",
           left: 0,
           [`& .${circularProgressClasses.circle}`]: {
-            strokeLinecap: 'round',
+            strokeLinecap: "round",
           },
         }}
         size={20}
@@ -41,36 +42,66 @@ const FacebookCircularProgress = (props: JSX.IntrinsicAttributes) => {
       />
     </Box>
   );
-}
+};
 
-export default function Header(options:any) {
+type HeaderProps = {
+  isValidating: boolean;
+  searchText: string;
+  setSearchText: (searchText: string) => void;
+};
+
+export default function Header({
+  isValidating,
+  searchText,
+  setSearchText,
+}: HeaderProps) {
   const router = useRouter();
-  var searchTextDebounced = debounce((e: { target: { value: string | string[] | undefined; }; })=>{
-    router.query.text = e.target.value;
-    if(typeof options.setsearchText =="function"){
-      options.setsearchText(e.target.value);
-    }
-    router.push(router)
-  }, 200); 
-  const handlePaginationChange = (e:any)=>{
+  const [localSearchText, setLocalSearchText] = useState(searchText);
+  var searchTextDebounced = debounce(
+    (e: { target: { value: string | string[] | undefined } }) => {
+      router.query.text = e.target.value;
+      router.push(router);
+      setSearchText(e.target.value as string);
+    },
+    200
+  );
+  const handleSearchTextChange = (e: any) => {
+    setLocalSearchText(e.target.value as string);
     searchTextDebounced(e);
-
   };
+
   return (
     <header className={styles.header}>
       <div className={`container ${styles.innerContainer}`}>
         <div className={styles.logoContainer}>
-          <Image src="/assets/icons/logo.svg" width={48} height={48} alt="logo"/>
-          <h1>Bitcoin search tool</h1>
+          <Image
+            src="/assets/icons/logo.svg"
+            width={48}
+            height={48}
+            alt="logo"
+          />
+          <h1>Puravida</h1>
         </div>
         <div className={styles.inputContainer}>
-          <Image className={styles.searchIcon} src="/assets/icons/Vector.svg" width={19} height={19} alt="search"/>
-          <input placeholder="Restaurants" onChange={handlePaginationChange}/>
-          <div className={styles.loadingSpinner}>
-            <FacebookCircularProgress />
-          </div>
+          <Image
+            className={styles.searchIcon}
+            src="/assets/icons/Vector.svg"
+            width={19}
+            height={19}
+            alt="search"
+          />
+          <input
+            value={localSearchText}
+            placeholder="Restaurants"
+            onChange={handleSearchTextChange}
+          />
+          {isValidating && (
+            <div className={styles.loadingSpinner}>
+              <CircularProgressComponent />
+            </div>
+          )}
         </div>
       </div>
     </header>
-  )
+  );
 }

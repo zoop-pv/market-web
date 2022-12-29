@@ -1,7 +1,6 @@
 import Image from "next/image"
 import styles from "./styles.module.scss";
 
- 
 type CardProps = {
   mainImageUrl: string,
   price: number,

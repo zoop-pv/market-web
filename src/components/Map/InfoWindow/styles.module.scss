@@ -65,6 +65,12 @@
         margin-right: 14px;
         border-radius: 5px;
         padding: 8px 12px;
+        a {
+          display: flex;
+          text-decoration: none;
+          align-items: center;
+          color: #3752fe;
+        }
         img {
           margin-right: 6px;
         }

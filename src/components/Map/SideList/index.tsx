@@ -80,7 +80,7 @@ export const SideList = ({
               <div className={styles.location}></div>
             </div>
             <div className={styles.sideCardsContainer}>
-              {cards.map((card) => (
+              {cards?.map((card) => (
                 <ListCard key={card.address} {...{ card, setActiveCard }} />
               ))}
             </div>
@@ -98,7 +98,7 @@ export const SideList = ({
       ) : (
         <div className={`bottomSliderList ${styles.bottomSliderList}`}>
           <Slider {...settings}>
-            {cards.map((card) => (
+            {cards?.map((card) => (
               <ListCard key={card.address} {...{ card, setActiveCard }} />
             ))}
           </Slider>

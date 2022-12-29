@@ -4,6 +4,7 @@ const nextConfig = {
   swcMinify: true,
   env: {
     ENDPOINT_BASE_URL: process.env.ENDPOINT_BASE_URL,
+    MAP_API_KEY: process.env.MAP_API_KEY,
   },
   images: {
     remotePatterns: [

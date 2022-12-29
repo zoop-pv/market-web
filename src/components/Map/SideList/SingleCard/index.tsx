@@ -9,7 +9,7 @@ const SingleCard = ({
   activeCard: CardType;
   setActiveCard: (card: null) => void;
 }) => {
-  const { address } = activeCard;
+  const { name, address, openHours } = activeCard;
 
   return (
     <div className={styles.singleCard}>
@@ -27,7 +27,7 @@ const SingleCard = ({
       <div className={styles.textSection}>
         <div className={styles.addressCon}>
           <div>
-            <h4>{address}</h4>
+            <h4>{name}</h4>
             <div>
               <Image
                 src="/assets/icons/ssMapIcon.svg"
@@ -36,7 +36,7 @@ const SingleCard = ({
                 alt="location"
                 className={styles.ssMapIcon}
               />
-              <p>Shop A, 2388 Glendale BlvdLos Angeles, CA 90039</p>
+              <p>{address}</p>
             </div>
           </div>
           <Image
@@ -62,7 +62,7 @@ const SingleCard = ({
         <div className={styles.specs}>
           <div>
             <h4>Open Hour</h4>
-            <p>10:00 - 23:00</p>
+            <p>{openHours}</p>
           </div>
           <div>
             <h4>Cuisines</h4>

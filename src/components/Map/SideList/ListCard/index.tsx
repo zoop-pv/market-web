@@ -9,7 +9,7 @@ const ListCard = ({
   card: CardType;
   setActiveCard: (card: CardType) => void;
 }) => {
-  const { distance, address } = card;
+  const { distance, name, location } = card;
 
   return (
     <div className={styles.listCard} onClick={() => setActiveCard(card)}>
@@ -17,7 +17,7 @@ const ListCard = ({
         <Image src="/assets/icons/infoWindowImg.svg" fill alt="card" />
       </div>
       <div className={styles.infoContainer}>
-        <h4>{address}</h4>
+        <h4>{name}</h4>
         <div className={styles.address}>
           <Image
             src="/assets/icons/addressArrow.svg"
@@ -32,16 +32,22 @@ const ListCard = ({
           <p>Burgers - Italian - Hot vine - Grilled - Canadian</p>
         </div>
         <div className={styles.cta}>
-          <button>
-            <Image
-              src="/assets/icons/send.svg"
-              width={11}
-              height={14}
-              alt="direction"
-            />
-            <span>Direction</span>
+          <button onClick={(e) => e.stopPropagation()}>
+            <a
+              href={`https://maps.google.com/?q=${location.coordinates[0]},${location.coordinates[1]}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Image
+                src="/assets/icons/send.svg"
+                width={11}
+                height={14}
+                alt="direction"
+              />
+              <span>Direction</span>
+            </a>
           </button>
-          <button>
+          <button onClick={(e) => e.stopPropagation()}>
             <Image
               src="/assets/icons/shape.svg"
               width={8}

@@ -9,7 +9,7 @@ const InfoWindow = ({
   card: CardType;
   handleActiveMarker: (markerId: string) => void;
 }) => {
-  const { distance, address } = card;
+  const { distance, name, location } = card;
 
   return (
     <div className={styles.infoWindow} onClick={(e) => e.stopPropagation()}>
@@ -25,7 +25,7 @@ const InfoWindow = ({
         <Image src="/assets/icons/infoWindowImg.svg" fill alt="card" />
       </div>
       <div className={styles.infoContainer}>
-        <h4>{address}</h4>
+        <h4>{name}</h4>
         <div className={styles.address}>
           <Image
             src="/assets/icons/addressArrow.svg"
@@ -41,13 +41,19 @@ const InfoWindow = ({
         </div>
         <div className={styles.cta}>
           <button>
-            <Image
-              src="/assets/icons/send.svg"
-              width={11}
-              height={14}
-              alt="direction"
-            />
-            <span>Direction</span>
+            <a
+              href={`https://maps.google.com/?q=${location.coordinates[0]},${location.coordinates[1]}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Image
+                src="/assets/icons/send.svg"
+                width={11}
+                height={14}
+                alt="direction"
+              />
+              <span>Direction</span>
+            </a>
           </button>
           <button>
             <Image

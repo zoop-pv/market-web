@@ -16,7 +16,7 @@ const CustomMarker = ({
   activeMarker: string;
   handleActiveMarker: (markerId: string) => void;
 }) => {
-  const { distance, address } = card;
+  const { name, rating } = card;
   return (
     <>
       <div
@@ -28,9 +28,9 @@ const CustomMarker = ({
       >
         <div className={styles.iconContainer}>
           <Image src="/assets/icons/fullMarker.svg" fill alt="marker" />
-          <p className={styles.distance}>{distance}</p>
+          <p className={styles.rating}>{rating}</p>
           <div className={styles.textContainer}>
-            <p>{address}</p>
+            <p>{name}</p>
           </div>
         </div>
       </div>
