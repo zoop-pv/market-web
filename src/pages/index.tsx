@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Card from "@/components/Card";
 import NavHeader from "@/components/Header";
 import TagSlider from "@/components/TagSlider";
-import { Grid } from "@mui/material";
+import { Grid, Pagination } from "@mui/material";
 import styles from "./styles.module.scss";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -65,15 +65,15 @@ export default function Home() {
             <p>5 Km</p>
           </div> */}
         </Grid>
-        {data?.map((card: CardType) => (
+        {data?.data?.map((card: CardType) => (
           <Grid item key={card.address} xs={6} md={3} lg={3}>
             {" "}
             <Card mainImageUrl={""} {...{ ...card }} />{" "}
           </Grid>
         ))}
-        {/* <Grid item xs={12} className={styles.paginationContainer}>
-          <Pagination count={10} size="small" color="primary" />
-        </Grid> */}
+        <Grid item xs={12} className={styles.paginationContainer}>
+          <Pagination count={data?.pagination?.numberOfPages} size="small" color="primary" />
+        </Grid>
       </Grid>
     ),
     [Views.MAP_VIEW]: (

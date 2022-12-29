@@ -24,6 +24,7 @@ export function getMarketplacePosts(options: getMarketplacePostsParameters) {
                 limit: ${options.limit}
               })
             {
+              data{
                 _id
                 name
                 description
@@ -34,6 +35,14 @@ export function getMarketplacePosts(options: getMarketplacePostsParameters) {
                 location {
                   coordinates
                 }
+              }
+              pagination{
+                page
+                total
+                numberOfPages
+                count
+                limit
+              }
             }
         }`;
 
