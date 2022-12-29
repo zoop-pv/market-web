@@ -8,12 +8,25 @@ import { getMarketplaceTags } from "@/services/tags.service";
 type TagProps = {
   icon?: string;
   title?: string;
+  _id: string;
+  slug: string;
+  selectedTags: string[];
   name?: string;
   onClick: MouseEventHandler;
 };
 
-const Tag = ({ name, icon, onClick }: TagProps) => (
-  <div className={styles.tag} onClick={onClick}>
+type ITag = {
+  icon: string;
+  name: string;
+  _id: string;
+  slug: string;
+};
+
+const Tag = ({ slug, name, icon, onClick, selectedTags }: TagProps) => (
+  <div
+    className={`${styles.tag} ${selectedTags.includes(slug) && styles.active}`}
+    onClick={onClick}
+  >
     <img src={icon} alt="logo" />
     <p data-text={name}>{name}</p>
   </div>
@@ -30,39 +43,36 @@ export default function TagSlider({
 }: TagsSliderProps) {
   const { data } = useSWR("tags", getMarketplaceTags());
   const router = useRouter();
-  const handleTagChange = (id: string) => {
-    let searchTags = router.query.tags
-      ? Array.isArray(router.query.tags)
-        ? router.query.tags
-        : [router.query.tags]
+  const handleTagChange = (slug: string) => {
+    let searchTags = router.query["tagsSlugs[]"]
+      ? Array.isArray(router.query["tagsSlugs[]"])
+        ? router.query["tagsSlugs[]"]
+        : [router.query["tagsSlugs[]"]]
       : [];
-    if (selectedTags.includes(id)) {
-      const index = searchTags.indexOf(id);
-      if (index > -1) {
-        searchTags.splice(index, 1);
+    if (slug) {
+      if (selectedTags.includes(slug)) {
+        const index = searchTags.indexOf(slug);
+        if (index > -1) {
+          searchTags.splice(index, 1);
+        }
+      } else {
+        searchTags.push(slug);
       }
-    } else {
-      searchTags.push(id);
     }
-    if (searchTags.length > 1) {
-      setSelectedTags([]);
-    } else {
-      setSelectedTags(searchTags);
-    }
-    router.query.tagId = searchTags;
+    setSelectedTags(searchTags);
+    router.query["tagsSlugs[]"] = searchTags;
     router.push(router);
   };
 
   let tagsData = data && data.tags ? data.tags : [];
-
   return (
     <div className={styles.tagsSlider}>
-      {tagsData.map((tag: any) => (
+      {tagsData.map((tag: ITag) => (
         <Tag
           key={tag._id}
-          {...{ ...tag }}
+          {...{ ...tag, selectedTags }}
           onClick={() => {
-            handleTagChange(tag._id);
+            handleTagChange(tag.slug);
           }}
         />
       ))}

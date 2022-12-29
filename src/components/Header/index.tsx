@@ -7,7 +7,7 @@ import styles from "./styles.module.scss";
 import { Box } from "@mui/material";
 import { useRouter } from "next/router";
 import { debounce } from "lodash";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const CircularProgressComponent = (props: JSX.IntrinsicAttributes) => {
   return (
@@ -69,6 +69,12 @@ export default function Header({
     setLocalSearchText(e.target.value as string);
     searchTextDebounced(e);
   };
+
+  useEffect(() => {
+    if (searchText) {
+      setLocalSearchText(searchText);
+    }
+  }, [searchText]);
 
   return (
     <header className={styles.header}>

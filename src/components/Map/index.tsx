@@ -27,6 +27,8 @@ const Map = ({ cards }: { cards: CardType[] }) => {
     }
   }, [cards]);
 
+  console.log({ cards });
+
   return (
     <>
       <SideList {...{ activeCard, setActiveCard, cards }} />

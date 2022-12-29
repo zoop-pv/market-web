@@ -2,7 +2,7 @@ import instanceAxios from "./api";
 
 export type getMarketplacePostsParameters = {
   text?: string;
-  tags?: string[];
+  tagsSlugs: string[];
   page?: number;
   limit?: number;
   sortBy?: string;
@@ -10,16 +10,10 @@ export type getMarketplacePostsParameters = {
 };
 
 export function getMarketplacePosts(options: getMarketplacePostsParameters) {
-  let tagsQuery = "";
-  if (options?.tags?.length) {
-    tagsQuery = `tagId:"${options?.tags[0]}"`;
-  }
-
   const QUERY = `query{
             filterMarketplacePosts(filterPostsInput:{
-
                 text:"${options.text}"
-                ${tagsQuery}
+                tagsSlugs: ${JSON.stringify(options.tagsSlugs)}
                 page: ${options.page}
                 limit: ${options.limit}
               })

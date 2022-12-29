@@ -9,6 +9,7 @@ export function getMarketplaceTags() {
                   icon
                   _id
                   status
+                  slug
                 }
                 pagination {
                   total

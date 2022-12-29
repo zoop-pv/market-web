@@ -10,7 +10,7 @@ import Map from "@/components/Map";
 import useSWR from "swr";
 import { getMarketplacePosts } from "@/services/posts.service";
 import { CardType } from "@/types/Card";
-import Header from 'next/head';
+import Header from "next/head";
 
 enum Views {
   LIST_VIEW = "list-view",
@@ -19,6 +19,7 @@ enum Views {
 
 export default function Home() {
   const [view, setIsViewList] = useState(Views.LIST_VIEW);
+  const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const router = useRouter();
@@ -26,16 +27,16 @@ export default function Home() {
   const { data, mutate, isValidating } = useSWR(
     "posts",
     getMarketplacePosts({
-      page: 1,
+      page: page,
       limit: 10,
       text: searchText,
-      tags: selectedTags,
+      tagsSlugs: selectedTags,
     })
   );
 
   useEffect(() => {
     mutate();
-  }, [searchText, selectedTags]);
+  }, [page, searchText, selectedTags]);
 
   const toggleViewType = (view: Views) => {
     setIsViewList(view);
@@ -43,11 +44,33 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const { view } = router.query;
+    const { view, page, text } = router.query;
     if (view) {
       setIsViewList(view as Views);
     }
+    if (text) {
+      setSearchText(text as string);
+    }
+    if (router.query["tagsSlugs[]"]) {
+      if (Array.isArray(router.query["tagsSlugs[]"])) {
+        setSelectedTags(router.query["tagsSlugs[]"]);
+      } else {
+        setSelectedTags([router.query["tagsSlugs[]"]]);
+      }
+    }
+    if (page) {
+      setPage(Number(page));
+    }
   }, [view, router]);
+
+  const handlePaginationChange = (
+    _event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPage(value);
+    router.query.page = `${value}`;
+    router.push(router);
+  };
 
   const ViewMap = {
     [Views.LIST_VIEW]: (
@@ -71,14 +94,22 @@ export default function Home() {
             <Card mainImageUrl={""} {...{ ...card }} />{" "}
           </Grid>
         ))}
-        <Grid item xs={12} className={styles.paginationContainer}>
-          <Pagination count={data?.pagination?.numberOfPages} size="small" color="primary" />
-        </Grid>
+        {data && (
+          <Grid item xs={12} className={styles.paginationContainer}>
+            <Pagination
+              onChange={handlePaginationChange}
+              page={page}
+              count={data?.pagination?.numberOfPages}
+              size="small"
+              color="primary"
+            />
+          </Grid>
+        )}
       </Grid>
     ),
     [Views.MAP_VIEW]: (
       <div className="map-container">
-        <Map cards={data} />
+        <Map cards={data?.data} />
       </div>
     ),
   };
