@@ -11,6 +11,8 @@ import useSWR from "swr";
 import { getMarketplacePosts } from "@/services/posts.service";
 import { CardType } from "@/types/Card";
 import Header from "next/head";
+import Modal from "@mui/material/Modal";
+import ModalCard from "@/components/ModalCard";
 
 enum Views {
   LIST_VIEW = "list-view",
@@ -22,7 +24,11 @@ export default function Home() {
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [isNoData, setIsNoData] = useState(false);
   const router = useRouter();
+
+  const [activeCard, setActiveCard] = useState<CardType | null>(null);
+  const handleClose = () => setActiveCard(null);
 
   const { data, mutate, isValidating } = useSWR(
     "posts",
@@ -37,6 +43,10 @@ export default function Home() {
   useEffect(() => {
     mutate();
   }, [page, searchText, selectedTags]);
+
+  useEffect(() => {
+    setIsNoData(data?.data?.length === 0);
+  }, [data]);
 
   const toggleViewType = (view: Views) => {
     setIsViewList(view);
@@ -88,13 +98,36 @@ export default function Home() {
             <p>5 Km</p>
           </div> */}
         </Grid>
+        <Modal open={Boolean(activeCard)} onClose={handleClose}>
+          <ModalCard
+            activeCard={activeCard as CardType}
+            setActiveCard={setActiveCard}
+          />
+        </Modal>
         {data?.data?.map((card: CardType) => (
-          <Grid item key={card.address} xs={6} md={3} lg={3}>
-            {" "}
-            <Card mainImageUrl={""} {...{ ...card }} />{" "}
+          <Grid
+            item
+            key={card.address}
+            xs={6}
+            sm={4}
+            md={3}
+            className={styles.cardContainer}
+          >
+            <Card {...{ card, setActiveCard }} />
           </Grid>
         ))}
-        {data && (
+        {isNoData ? (
+          <div className={styles.noData}>
+            <div className={styles.imgCon}>
+              <Image src="/assets/images/noDataCard.svg" fill alt="no data" />
+            </div>
+            <p className={styles.noRes}>No Result Found!</p>
+            <p className={styles.couldNotFind}>
+              We couldn’t find the result you’re looking for? Be sure to check
+              your spelling.
+            </p>
+          </div>
+        ) : (
           <Grid item xs={12} className={styles.paginationContainer}>
             <Pagination
               onChange={handlePaginationChange}
@@ -148,7 +181,7 @@ export default function Home() {
       <TagSlider {...{ selectedTags, setSelectedTags }} />
       <div className="container">
         {ViewMap[view]}
-        {ButtonViewMap[view]}
+        {!isNoData && ButtonViewMap[view]}
       </div>
     </div>
   );

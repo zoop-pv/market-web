@@ -1,5 +1,5 @@
 export type CardType = {
-  url: string;
+  mainImageUrl: string;
   name: string;
   price: number;
   address: string;

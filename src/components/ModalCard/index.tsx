@@ -3,7 +3,7 @@ import { CardType } from "@/types/Card";
 import Rating from "@mui/material/Rating";
 import styles from "./styles.module.scss";
 
-const SingleCard = ({
+const ModalCard = ({
   activeCard,
   setActiveCard,
 }: {
@@ -87,4 +87,4 @@ const SingleCard = ({
   );
 };
 
-export default SingleCard;
+export default ModalCard;

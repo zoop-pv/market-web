@@ -11,6 +11,29 @@ const Map = ({ cards }: { cards: CardType[] }) => {
   const [activeCard, setActiveCard] = useState<CardType | null>(null);
 
   const handleActiveMarker = (markerID: string) => {
+    console.log(window.innerWidth);
+    const newCenter = markerID.split("-");
+    if (window.innerWidth >= 1250) {
+      setCenter({
+        lat: Number(newCenter[0]) + 1,
+        lng: Number(newCenter[1]) + 1,
+      });
+    } else if (window.innerWidth > 1024) {
+      setCenter({
+        lat: Number(newCenter[0]) + 1,
+        lng: Number(newCenter[1]) + 2,
+      });
+    } else if (window.innerWidth > 576) {
+      setCenter({
+        lat: Number(newCenter[0]) + 0.5,
+        lng: Number(newCenter[1]) + 0,
+      });
+    } else if (window.innerWidth <= 576) {
+      setCenter({
+        lat: Number(newCenter[0]),
+        lng: Number(newCenter[1]) + 0.5,
+      });
+    }
     if (markerID === activeMarker) {
       return;
     }
@@ -27,8 +50,6 @@ const Map = ({ cards }: { cards: CardType[] }) => {
     }
   }, [cards]);
 
-  console.log({ cards });
-
   return (
     <>
       <SideList {...{ activeCard, setActiveCard, cards }} />
@@ -36,7 +57,7 @@ const Map = ({ cards }: { cards: CardType[] }) => {
         bootstrapURLKeys={{
           key: environments.mapApiKey,
         }}
-        defaultCenter={center}
+        center={center}
         defaultZoom={7}
         onClick={() => setActiveMarker("")}
       >

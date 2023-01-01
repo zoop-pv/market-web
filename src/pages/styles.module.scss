@@ -3,6 +3,36 @@
   flex-direction: column;
 }
 
+.noData {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  max-width: 347px;
+  .imgCon {
+    position: relative;
+    width: 256px;
+    height: 297px;
+    max-width: 70vw;
+  }
+  p {
+    color: #000;
+    text-align: center;
+    margin: 0;
+  }
+  .noRes {
+    font-weight: 500;
+    font-size: 28px;
+    margin: 32px 0 8px;
+  }
+  .couldNotFind {
+    font-size: 18px;
+    line-height: 32px;
+  }
+}
+
 .cardsContainer {
   padding-bottom: 80px;
   .header {
@@ -35,8 +65,14 @@
       }
     }
   }
+  .cardContainer {
+    @media screen and (max-width: 420px) {
+      flex-basis: 100%;
+      max-width: 100%;
+    }
+  }
   @media screen and (max-width: 576px) {
-    padding-bottom: 35px;
+    padding-bottom: 45px;
   }
 }
 
@@ -44,7 +80,7 @@
   display: flex;
   justify-content: center;
   @media screen and (max-width: 576px) {
-    margin-bottom: 45px;
+    margin-bottom: 0;
   }
 }
 
@@ -58,8 +94,9 @@
   width: 120px;
   height: 42px;
   cursor: pointer;
+  border: none;
   position: fixed;
-  bottom: 20px;
+  bottom: 64px;
   margin: 0;
   left: 50%;
   transform: translateX(-50%);
@@ -71,5 +108,9 @@
     @media screen and (max-width: 1024px) {
       bottom: 220px;
     }
+  }
+  @media screen and (max-width: 992px) {
+    height: 32px;
+    font-size: 12px;
   }
 }

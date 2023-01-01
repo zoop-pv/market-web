@@ -2,12 +2,11 @@
   position: absolute;
   z-index: 1;
   right: 10px;
-  top: 230px;
-  bottom: 0;
+  max-height: 70vh;
+  bottom: 20px;
   width: 400px;
   background-color: #fff;
-  overflow-y: hidden;
-  padding-bottom: 60px;
+  overflow-y: auto;
   border-radius: 8px;
   &.noBorderPadding {
     padding-bottom: 0;
@@ -32,6 +31,9 @@
   .sideCardsContainer::-webkit-scrollbar {
     display: none;
   }
+  @media screen and (max-width: 1576px) {
+    max-height: 60vh;
+  }
   @media screen and (max-width: 1024px) {
     display: none;
   }
@@ -43,11 +45,18 @@
       display: block !important;
       position: fixed;
       inset: 0;
+      max-height: none;
       width: auto;
       border-radius: 0;
       z-index: 2;
     }
   }
+  &.mobileSingleCard::-webkit-scrollbar {
+    display: none;
+  }
+}
+.sideList::-webkit-scrollbar {
+  display: none;
 }
 
 .bottomSliderList {

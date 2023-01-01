@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { CardType } from "@/types/Card";
+import Rating from "@mui/material/Rating";
 import styles from "./styles.module.scss";
 
 const InfoWindow = ({
@@ -9,7 +10,7 @@ const InfoWindow = ({
   card: CardType;
   handleActiveMarker: (markerId: string) => void;
 }) => {
-  const { distance, name, location } = card;
+  const { distance, name, location, rating } = card;
 
   return (
     <div className={styles.infoWindow} onClick={(e) => e.stopPropagation()}>
@@ -35,7 +36,17 @@ const InfoWindow = ({
           />
           <span>{distance}</span>
         </div>
-        <div className={styles.review}></div>
+        {rating && (
+          <div className={styles.rating}>
+            <Rating
+              size="small"
+              name="read-only"
+              precision={0.5}
+              value={rating}
+              readOnly
+            />
+          </div>
+        )}
         <div className={styles.content}>
           <p>Burgers - Italian - Hot vine - Grilled - Canadian</p>
         </div>
