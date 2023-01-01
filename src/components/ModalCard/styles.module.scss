@@ -23,12 +23,16 @@
   .imageContainer {
     height: 260px;
     position: relative;
-    .backBtn {
+    .closeBtn {
+      width: 26px;
+      height: 26px;
       position: absolute;
-      left: 17px;
+      right: 17px;
       top: 14px;
       cursor: pointer;
       z-index: 1;
+      background-color: #fff;
+      border-radius: 50%;
     }
   }
   .textSection {

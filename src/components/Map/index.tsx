@@ -5,13 +5,18 @@ import Marker from "./Marker";
 import { SideList } from "./SideList";
 import environments from "@/config/environments";
 
-const Map = ({ cards }: { cards: CardType[] }) => {
+const Map = ({
+  cards,
+  sideListTopMargin,
+}: {
+  cards: CardType[];
+  sideListTopMargin: number;
+}) => {
   const [activeMarker, setActiveMarker] = useState<string>("");
   const [center, setCenter] = useState({ lat: 25.12457, lng: 20.12457 });
   const [activeCard, setActiveCard] = useState<CardType | null>(null);
 
   const handleActiveMarker = (markerID: string) => {
-    console.log(window.innerWidth);
     const newCenter = markerID.split("-");
     if (window.innerWidth >= 1250) {
       setCenter({
@@ -52,7 +57,7 @@ const Map = ({ cards }: { cards: CardType[] }) => {
 
   return (
     <>
-      <SideList {...{ activeCard, setActiveCard, cards }} />
+      <SideList {...{ activeCard, setActiveCard, cards, sideListTopMargin }} />
       <GoogleMapReact
         bootstrapURLKeys={{
           key: environments.mapApiKey,
@@ -61,9 +66,9 @@ const Map = ({ cards }: { cards: CardType[] }) => {
         defaultZoom={7}
         onClick={() => setActiveMarker("")}
       >
-        {cards?.map((card) => (
+        {cards?.map((card, i) => (
           <Marker
-            key={card.address}
+            key={`${card.address}-${i}`}
             card={card}
             lat={card.location.coordinates[0]}
             lng={card.location.coordinates[1]}

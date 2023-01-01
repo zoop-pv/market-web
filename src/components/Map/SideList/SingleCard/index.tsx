@@ -10,7 +10,7 @@ const SingleCard = ({
   activeCard: CardType;
   setActiveCard: (card: null) => void;
 }) => {
-  const { name, address, openHours, rating } = activeCard;
+  const { name, address, openHours, rating, location } = activeCard;
 
   return (
     <div className={styles.singleCard}>
@@ -40,13 +40,19 @@ const SingleCard = ({
               <p>{address}</p>
             </div>
           </div>
-          <Image
-            src="/assets/icons/singleSideLocation.svg"
-            width={104}
-            height={30}
-            alt="location"
-            className={styles.ssLo}
-          />
+          <a
+            href={`https://maps.google.com/?q=${location.coordinates[0]},${location.coordinates[1]}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Image
+              src="/assets/icons/singleSideLocation.svg"
+              width={104}
+              height={30}
+              alt="location"
+              className={styles.ssLo}
+            />
+          </a>
         </div>
         <div className={styles.stars}>
           {rating && (

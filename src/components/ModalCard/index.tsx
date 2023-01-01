@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { CardType } from "@/types/Card";
 import Rating from "@mui/material/Rating";
+import CloseIcon from "@mui/icons-material/Close";
 import styles from "./styles.module.scss";
 
 const ModalCard = ({
@@ -10,19 +11,24 @@ const ModalCard = ({
   activeCard: CardType;
   setActiveCard: (card: null) => void;
 }) => {
-  const { name, address, openHours, rating } = activeCard;
+  const { name, address, openHours, rating, location } = activeCard;
 
   return (
     <div className={styles.singleCard}>
       <div className={styles.imageContainer}>
-        <Image
+        <CloseIcon
+          onClick={() => setActiveCard(null)}
+          className={styles.closeBtn}
+          fontSize="small"
+        />
+        {/* <Image
           onClick={() => setActiveCard(null)}
           src="/assets/icons/sideCardBack.svg"
           width={28}
           height={28}
           alt="back"
           className={styles.backBtn}
-        />
+        /> */}
         <Image src="/assets/images/sideCard.jpg" fill alt="card" />
       </div>
       <div className={styles.textSection}>
@@ -40,13 +46,19 @@ const ModalCard = ({
               <p>{address}</p>
             </div>
           </div>
-          <Image
-            src="/assets/icons/singleSideLocation.svg"
-            width={104}
-            height={30}
-            alt="location"
-            className={styles.ssLo}
-          />
+          <a
+            href={`https://maps.google.com/?q=${location.coordinates[0]},${location.coordinates[1]}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Image
+              src="/assets/icons/singleSideLocation.svg"
+              width={104}
+              height={30}
+              alt="location"
+              className={styles.ssLo}
+            />
+          </a>
         </div>
         <div className={styles.stars}>
           {rating && (

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Card from "@/components/Card";
 import NavHeader from "@/components/Header";
 import TagSlider from "@/components/TagSlider";
@@ -19,11 +19,31 @@ enum Views {
   MAP_VIEW = "map-view",
 }
 
+type FilterState = {
+  page: number;
+  searchText: string;
+  selectedTags: string[];
+};
+
 export default function Home() {
+  const navRef = useRef(null);
+  const tagsSliderRef = useRef(null);
+  const [navHeight, setNavHeight] = useState(0);
+  const [tagsSliderHeight, setTagsSliderHeight] = useState(0);
+  useEffect(() => {
+    if (navRef.current != null) {
+      setNavHeight((navRef.current as HTMLElement).clientHeight);
+    }
+    if (tagsSliderRef.current != null) {
+      setTagsSliderHeight((tagsSliderRef.current as HTMLElement).clientHeight);
+    }
+  }, []);
   const [view, setIsViewList] = useState(Views.LIST_VIEW);
-  const [page, setPage] = useState(1);
-  const [searchText, setSearchText] = useState("");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [filterState, setFilterState] = useState<FilterState>({
+    page: 1,
+    searchText: "",
+    selectedTags: [],
+  });
   const [isNoData, setIsNoData] = useState(false);
   const router = useRouter();
 
@@ -33,51 +53,64 @@ export default function Home() {
   const { data, mutate, isValidating } = useSWR(
     "posts",
     getMarketplacePosts({
-      page: page,
+      page: filterState.page,
       limit: 10,
-      text: searchText,
-      tagsSlugs: selectedTags,
+      text: filterState.searchText,
+      tagsSlugs: filterState.selectedTags,
     })
   );
 
   useEffect(() => {
     mutate();
-  }, [page, searchText, selectedTags]);
+  }, [filterState]);
 
   useEffect(() => {
     setIsNoData(data?.data?.length === 0);
   }, [data]);
 
   const toggleViewType = (view: Views) => {
-    setIsViewList(view);
-    router.push(`?view=${view}`, undefined, { shallow: true });
+    let query = "";
+    Object.keys(router.query).map((key) => {
+      if (key !== "view") {
+        query += `${key}=${router.query[key]}&`;
+      }
+    });
+    router.push(`?${query}view=${view}`, undefined, { shallow: true });
   };
 
   useEffect(() => {
     const { view, page, text } = router.query;
+    let filterState: FilterState = {
+      page: 1,
+      searchText: "",
+      selectedTags: [],
+    };
     if (view) {
       setIsViewList(view as Views);
     }
     if (text) {
-      setSearchText(text as string);
+      filterState.searchText = text as string;
     }
     if (router.query["tagsSlugs[]"]) {
+      let tagsSlugs = [];
       if (Array.isArray(router.query["tagsSlugs[]"])) {
-        setSelectedTags(router.query["tagsSlugs[]"]);
+        tagsSlugs = router.query["tagsSlugs[]"];
       } else {
-        setSelectedTags([router.query["tagsSlugs[]"]]);
+        tagsSlugs = [router.query["tagsSlugs[]"]];
       }
+      filterState.selectedTags = tagsSlugs;
     }
     if (page) {
-      setPage(Number(page));
+      filterState.page = Number(page);
     }
-  }, [view, router]);
+    setFilterState(filterState);
+  }, [router]);
 
   const handlePaginationChange = (
     _event: React.ChangeEvent<unknown>,
     value: number
   ) => {
-    setPage(value);
+    setFilterState((filterState) => ({ ...filterState, page: value }));
     router.query.page = `${value}`;
     router.push(router);
   };
@@ -99,15 +132,17 @@ export default function Home() {
           </div> */}
         </Grid>
         <Modal open={Boolean(activeCard)} onClose={handleClose}>
-          <ModalCard
-            activeCard={activeCard as CardType}
-            setActiveCard={setActiveCard}
-          />
+          <>
+            <ModalCard
+              activeCard={activeCard as CardType}
+              setActiveCard={setActiveCard}
+            />
+          </>
         </Modal>
-        {data?.data?.map((card: CardType) => (
+        {data?.data?.map((card: CardType, i: number) => (
           <Grid
             item
-            key={card.address}
+            key={`${card.address}-${i}`}
             xs={6}
             sm={4}
             md={3}
@@ -131,7 +166,7 @@ export default function Home() {
           <Grid item xs={12} className={styles.paginationContainer}>
             <Pagination
               onChange={handlePaginationChange}
-              page={page}
+              page={filterState.page}
               count={data?.pagination?.numberOfPages}
               size="small"
               color="primary"
@@ -142,7 +177,10 @@ export default function Home() {
     ),
     [Views.MAP_VIEW]: (
       <div className="map-container">
-        <Map cards={data?.data} />
+        <Map
+          sideListTopMargin={navHeight + tagsSliderHeight + 47}
+          cards={data?.data}
+        />
       </div>
     ),
   };
@@ -168,17 +206,30 @@ export default function Home() {
     ),
   };
 
+  const setSearchText = (text: string) => {
+    setFilterState((filterState) => ({ ...filterState, text }));
+  };
+
+  const setSelectedTags = (selectedTags: string[]) => {
+    setFilterState((filterState) => ({ ...filterState, selectedTags }));
+  };
+
   return (
     <div className={styles.home}>
       <Header>
         <title>PuraVida</title>
       </Header>
       <NavHeader
+        ref={navRef}
         isValidating={isValidating}
-        searchText={searchText}
+        searchText={filterState.searchText}
         setSearchText={setSearchText}
       />
-      <TagSlider {...{ selectedTags, setSelectedTags }} />
+      <TagSlider
+        ref={tagsSliderRef}
+        {...{ setSelectedTags }}
+        selectedTags={filterState.selectedTags}
+      />
       <div className="container">
         {ViewMap[view]}
         {!isNoData && ButtonViewMap[view]}

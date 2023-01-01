@@ -1,5 +1,4 @@
 import Image from "next/image";
-
 import CircularProgress, {
   circularProgressClasses,
 } from "@mui/material/CircularProgress";
@@ -7,7 +6,7 @@ import styles from "./styles.module.scss";
 import { Box } from "@mui/material";
 import { useRouter } from "next/router";
 import { debounce } from "lodash";
-import { useEffect, useState } from "react";
+import { useEffect, useState, forwardRef } from "react";
 
 const CircularProgressComponent = (props: JSX.IntrinsicAttributes) => {
   return (
@@ -50,64 +49,66 @@ type HeaderProps = {
   setSearchText: (searchText: string) => void;
 };
 
-export default function Header({
-  isValidating,
-  searchText,
-  setSearchText,
-}: HeaderProps) {
-  const router = useRouter();
-  const [localSearchText, setLocalSearchText] = useState(searchText);
-  var searchTextDebounced = debounce(
-    (e: { target: { value: string | string[] | undefined } }) => {
-      router.query.text = e.target.value;
-      router.push(router);
-      setSearchText(e.target.value as string);
-    },
-    200
-  );
-  const handleSearchTextChange = (e: any) => {
-    setLocalSearchText(e.target.value as string);
-    searchTextDebounced(e);
-  };
+const Header = forwardRef<HTMLInputElement, HeaderProps>(
+  ({ isValidating, searchText, setSearchText }, ref) => {
+    const router = useRouter();
+    const [localSearchText, setLocalSearchText] = useState(searchText);
+    var searchTextDebounced = debounce(
+      (e: { target: { value: string | string[] | undefined } }) => {
+        router.query.text = e.target.value;
+        router.push(router);
+        setSearchText(e.target.value as string);
+      },
+      200
+    );
+    const handleSearchTextChange = (e: any) => {
+      setLocalSearchText(e.target.value as string);
+      searchTextDebounced(e);
+    };
 
-  useEffect(() => {
-    if (searchText) {
-      setLocalSearchText(searchText);
-    }
-  }, [searchText]);
+    useEffect(() => {
+      if (searchText) {
+        setLocalSearchText(searchText);
+      }
+    }, [searchText]);
 
-  return (
-    <header className={styles.header}>
-      <div className={`container ${styles.innerContainer}`}>
-        <div className={styles.logoContainer}>
-          <Image
-            src="/assets/icons/logo.svg"
-            width={48}
-            height={48}
-            alt="logo"
-          />
-          <h1>Puravida</h1>
+    return (
+      <header className={styles.header} ref={ref}>
+        <div className={`container ${styles.innerContainer}`}>
+          <div className={styles.logoContainer}>
+            <Image
+              src="/assets/icons/logo.svg"
+              width={48}
+              height={48}
+              alt="logo"
+            />
+            <h1>Puravida</h1>
+          </div>
+          <div className={styles.inputContainer}>
+            <Image
+              className={styles.searchIcon}
+              src="/assets/icons/Vector.svg"
+              width={19}
+              height={19}
+              alt="search"
+            />
+            <input
+              value={localSearchText}
+              placeholder="Restaurants"
+              onChange={handleSearchTextChange}
+            />
+            {isValidating && (
+              <div className={styles.loadingSpinner}>
+                <CircularProgressComponent />
+              </div>
+            )}
+          </div>
         </div>
-        <div className={styles.inputContainer}>
-          <Image
-            className={styles.searchIcon}
-            src="/assets/icons/Vector.svg"
-            width={19}
-            height={19}
-            alt="search"
-          />
-          <input
-            value={localSearchText}
-            placeholder="Restaurants"
-            onChange={handleSearchTextChange}
-          />
-          {isValidating && (
-            <div className={styles.loadingSpinner}>
-              <CircularProgressComponent />
-            </div>
-          )}
-        </div>
-      </div>
-    </header>
-  );
-}
+      </header>
+    );
+  }
+);
+
+Header.displayName = "NavHeader";
+
+export default Header;

@@ -34,7 +34,7 @@
 }
 
 .cardsContainer {
-  padding-bottom: 80px;
+  padding-bottom: 20px;
   .header {
     display: flex;
     align-items: center;
@@ -70,9 +70,6 @@
       flex-basis: 100%;
       max-width: 100%;
     }
-  }
-  @media screen and (max-width: 576px) {
-    padding-bottom: 45px;
   }
 }
 

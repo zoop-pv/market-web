@@ -61,15 +61,18 @@ export const SideList = ({
   activeCard,
   setActiveCard,
   cards,
+  sideListTopMargin,
 }: {
   activeCard: CardType | null;
   setActiveCard: (card: CardType | null) => void;
   cards: CardType[];
+  sideListTopMargin: number;
 }) => {
   return (
     <>
       <div
         className={`${styles.sideList} ${activeCard && styles.noBorderPadding}`}
+        style={{ top: `${sideListTopMargin}px` }}
       >
         {activeCard ? (
           <SingleCard {...{ activeCard, setActiveCard }} />
@@ -80,8 +83,11 @@ export const SideList = ({
               <div className={styles.location}></div>
             </div>
             <div className={styles.sideCardsContainer}>
-              {cards?.map((card) => (
-                <ListCard key={card.address} {...{ card, setActiveCard }} />
+              {cards?.map((card, i) => (
+                <ListCard
+                  key={`${card.address}-${i}`}
+                  {...{ card, setActiveCard }}
+                />
               ))}
             </div>
           </>
@@ -92,14 +98,18 @@ export const SideList = ({
           className={`${styles.sideList} ${
             activeCard && styles.noBorderPadding
           } ${styles.mobileSingleCard}`}
+          style={{ top: `${sideListTopMargin}px` }}
         >
           <SingleCard {...{ activeCard, setActiveCard }} />
         </div>
       ) : (
         <div className={`bottomSliderList ${styles.bottomSliderList}`}>
           <Slider {...settings}>
-            {cards?.map((card) => (
-              <ListCard key={card.address} {...{ card, setActiveCard }} />
+            {cards?.map((card, i) => (
+              <ListCard
+                key={`${card.address}-${i}`}
+                {...{ card, setActiveCard }}
+              />
             ))}
           </Slider>
         </div>
