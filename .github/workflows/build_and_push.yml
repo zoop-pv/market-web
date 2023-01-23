@@ -21,7 +21,7 @@ jobs:
   next-build:
     if: ( github.event.pull_request.merged == true || github.event_name == 'push' )     # Run only if triggered manually
     runs-on: ubuntu-latest
-    container: node:lts          # Use node LTS container version, same as Dockerfile base image
+    container: node:lts
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -30,14 +30,14 @@ jobs:
         env:
           ENDPOINT_BASE_URL: ${{secrets.ENDPOINT_BASE_URL}}
           MAP_API_KEY: ${{secrets.MAP_API_KEY}}
-      - name: Upload Next build          # Upload the artifact
+      - name: Upload Next build
         uses: actions/upload-artifact@v2
         with:
           name: build
           path: |
             .next
             public
-          retention-days: 7         # artifact retention duration, can be upto 30 days
+          retention-days: 7
   build-push-gcr:
     name: Build and Push to GCP Artifact Repo
     needs: next-build
