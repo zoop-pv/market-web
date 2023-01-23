@@ -75,13 +75,13 @@ jobs:
       id: image_push
       run: |-
         ## first we tag & push the git sha as well as the edge tag
-        docker tag $APP_NAME:$GITHUB_SHA "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$IMG_REPOSITORY/$APP_NAME:$GITHUB_SHA"
-        docker tag $APP_NAME:$GITHUB_SHA "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$IMG_REPOSITORY/$APP_NAME:edge"
-        docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$IMG_REPOSITORY/$APP_NAME:$GITHUB_SHA"
-        docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$IMG_REPOSITORY/$APP_NAME:edge"
+        docker tag $APP_NAME:$GITHUB_SHA "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$IMG_REPOSITORY/staging/$APP_NAME:$GITHUB_SHA"
+        docker tag $APP_NAME:$GITHUB_SHA "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$IMG_REPOSITORY/staging/$APP_NAME:edge"
+        docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$IMG_REPOSITORY/staging/$APP_NAME:$GITHUB_SHA"
+        docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$IMG_REPOSITORY/staging/$APP_NAME:edge"
 
         ## second we extract the image digest for the helm upgrade later
-        DIGEST=$(gcloud container images describe "$IMG_REPOSITORY/$PROJECT_ID/$APP_NAME:$GITHUB_SHA" --format="value(image_summary.digest)")
+        DIGEST=$(gcloud container images describe "$IMG_REPOSITORY/$PROJECT_ID/staging/$APP_NAME:$GITHUB_SHA" --format="value(image_summary.digest)")
         echo "image_digest=$DIGEST" >> $GITHUB_OUTPUT
 
   # update-helm-digest:
