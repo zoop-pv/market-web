@@ -8,15 +8,15 @@ RUN mkdir /home/node/app/ && chown -R node:node /home/node/app
 WORKDIR /home/node/app
 
 COPY package.json package.json
-COPY package-lock.json package-lock.json
+COPY yarn.lock yarn.lock
 
 USER node
 
-RUN npm install --production
+RUN yarn install --frozen-lockfile
 
 COPY --chown=node:node .next .next
 COPY --chown=node:node public public
 
 EXPOSE 3000
 
-CMD npm start
+CMD ["yarn", "start"]
