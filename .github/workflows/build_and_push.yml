@@ -18,16 +18,39 @@ env:
   HELM_REPOSITORY: ${{ vars.HELM_REPOSITORY }}
 
 jobs:
+  next-build:
+    if: ( github.event.pull_request.merged == true || github.event_name == 'push' )     # Run only if triggered manually
+    runs-on: ubuntu-latest
+    container: node:lts          # Use node LTS container version, same as Dockerfile base image
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - run: npm ci
+      - run: npm run build
+        env:
+          ENDPOINT_BASE_URL: ${{secrets.ENDPOINT_BASE_URL}}
+          MAP_API_KEY: ${{secrets.MAP_API_KEY}}
+      - name: Upload Next build          # Upload the artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: |
+            .next
+            public
+          retention-days: 7         # artifact retention duration, can be upto 30 days
   build-push-gcr:
     name: Build and Push to GCP Artifact Repo
-    if: ( github.event.pull_request.merged == true || github.event_name == 'push' )
+    needs: next-build
     runs-on: ubuntu-latest
     outputs:
       digest: ${{ steps.image_push.outputs.image_digest }}
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-
+    - name: Download next build       # Download the above uploaded artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: build
     - name: Authenticate
       uses: 'google-github-actions/auth@v1'
       with:
@@ -61,57 +84,57 @@ jobs:
         DIGEST=$(gcloud container images describe "$IMG_REPOSITORY/$PROJECT_ID/$APP_NAME:$GITHUB_SHA" --format="value(image_summary.digest)")
         echo "image_digest=$DIGEST" >> $GITHUB_OUTPUT
 
-  update-helm-digest:
-    name: Update the helm chart digest
-    needs: build-push-gcr
-    runs-on: ubuntu-latest
-    env:
-      IMAGE_DIGEST: ${{needs.build-push-gcr.outputs.digest}}
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+  # update-helm-digest:
+  #   name: Update the helm chart digest
+  #   needs: build-push-gcr
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     IMAGE_DIGEST: ${{needs.build-push-gcr.outputs.digest}}
+  #   steps:
+  #   - name: Checkout
+  #     uses: actions/checkout@v3
 
-    - name: Set up yq
-      uses: frenck/action-setup-yq@v1.0.2
+  #   - name: Set up yq
+  #     uses: frenck/action-setup-yq@v1.0.2
 
-    - name: Checkout Helm Repository
-      uses: actions/checkout@master
-      with: 
-        repository: ${{ env.HELM_REPOSITORY}}
-        token: ${{ secrets.HELM_REPO_TOKEN }}
-        path: helm-charts
+  #   - name: Checkout Helm Repository
+  #     uses: actions/checkout@master
+  #     with: 
+  #       repository: ${{ env.HELM_REPOSITORY}}
+  #       token: ${{ secrets.HELM_REPO_TOKEN }}
+  #       path: helm-charts
   
-    - uses: actions-ecosystem/action-get-latest-tag@v1
-      id: get-latest-tag
-      with:
-        semver_only: true
+  #   - uses: actions-ecosystem/action-get-latest-tag@v1
+  #     id: get-latest-tag
+  #     with:
+  #       semver_only: true
 
-    - name: Get old Chart Version
-      run: |
-        V=$(yq '.version' 'helm-charts/charts/${{ env.APP_NAME }}/Chart.yaml')
-        echo "OLD_CHART_VERSION=$V" >> $GITHUB_ENV
+  #   - name: Get old Chart Version
+  #     run: |
+  #       V=$(yq '.version' 'helm-charts/charts/${{ env.APP_NAME }}/Chart.yaml')
+  #       echo "OLD_CHART_VERSION=$V" >> $GITHUB_ENV
 
-    - name: Set Application & Chart Version
-      run: |
-        TAG_TRIMMED=$(echo "${{ steps.get-latest-tag.outputs.tag }}" | sed -e "s/v//g")
-        echo "APPLICATION_VERSION=$TAG_TRIMMED" >>$GITHUB_ENV
-        if [[ "$OLD_CHART_VERSION" == *"-dev"* ]]; then
-            echo "CHART_VERSION=$OLD_CHART_VERSION" >>$GITHUB_ENV
-        else
-            echo "CHART_VERSION=$TAG_TRIMMED-dev" >>$GITHUB_ENV
-        fi
+  #   - name: Set Application & Chart Version
+  #     run: |
+  #       TAG_TRIMMED=$(echo "${{ steps.get-latest-tag.outputs.tag }}" | sed -e "s/v//g")
+  #       echo "APPLICATION_VERSION=$TAG_TRIMMED" >>$GITHUB_ENV
+  #       if [[ "$OLD_CHART_VERSION" == *"-dev"* ]]; then
+  #           echo "CHART_VERSION=$OLD_CHART_VERSION" >>$GITHUB_ENV
+  #       else
+  #           echo "CHART_VERSION=$TAG_TRIMMED-dev" >>$GITHUB_ENV
+  #       fi
 
-    - name: Set Image Digest, Chart version & App version
-      run: |
-        yq -i '.image.digest = "${{ env.IMAGE_DIGEST }}"' 'helm-charts/charts/${{ env.APP_NAME }}/values.yaml'
-        yq -i '.version = "${{ env.CHART_VERSION }}"' 'helm-charts/charts/${{ env.APP_NAME }}/Chart.yaml'
-        yq -i '.appVersion = "${{ env.APPLICATION_VERSION }}"' 'helm-charts/charts/${{ env.APP_NAME }}/Chart.yaml'
+  #   - name: Set Image Digest, Chart version & App version
+  #     run: |
+  #       yq -i '.image.digest = "${{ env.IMAGE_DIGEST }}"' 'helm-charts/charts/${{ env.APP_NAME }}/values.yaml'
+  #       yq -i '.version = "${{ env.CHART_VERSION }}"' 'helm-charts/charts/${{ env.APP_NAME }}/Chart.yaml'
+  #       yq -i '.appVersion = "${{ env.APPLICATION_VERSION }}"' 'helm-charts/charts/${{ env.APP_NAME }}/Chart.yaml'
 
-    - name: Push Helm Chart Repo
-      run: |
-        cd ./helm-charts
-        git add .
-        git config user.name puravida-bot
-        git config user.email bot@pvbtc.cloud
-        git commit -am "chore: Update image digest to $IMAGE_DIGEST"
-        git push
+  #   - name: Push Helm Chart Repo
+  #     run: |
+  #       cd ./helm-charts
+  #       git add .
+  #       git config user.name puravida-bot
+  #       git config user.email bot@pvbtc.cloud
+  #       git commit -am "chore: Update image digest to $IMAGE_DIGEST"
+  #       git push

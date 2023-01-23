@@ -13,6 +13,11 @@ const nextConfig = {
         hostname: "images.pexels.com",
         pathname: "/photos/**",
       },
+      {
+        protocol: "https",
+        hostname: "ik.imagekit.io",
+        pathname: "/7anfedk/**",
+      },
     ],
   },
 };
